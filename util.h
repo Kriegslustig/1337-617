@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -97,6 +98,16 @@ int fs_mkdir (const char *restrict dirname)
   } else
   {
     printf("A something with this name already exsists.");
+  }
+  return 0;
+}
+
+int fs_rm (const char* filename)
+{
+  if( fs_exsists(filename) )
+  {
+    unlink(filename);
+    return 1;
   }
   return 0;
 }
