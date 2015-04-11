@@ -42,6 +42,16 @@ void substr (
   substring(string, from, length, new_array);
 }
 
+int fs_exsists (const char *restrict filepath)
+{
+  struct stat file_status = {0};
+  if( stat(filepath, &file_status) == -1 )
+  {
+    return 0;
+  }
+  return 1;
+}
+
 int fs_basepath (
   const char *restrict filepath,
   char *restrict basepath
@@ -61,16 +71,6 @@ int fs_basepath (
   return basepath_length;
 }
 
-int fs_exsists (const char *restrict filepath)
-{
-  struct stat file_status = {0};
-  if( stat(filepath, &file_status) == -1 )
-  {
-    return 0;
-  }
-  return 1;
-}
-
 mode_t fs_mode (char *restrict filepath) {
   struct stat file_status = {0};
   if( !fs_exsists(filepath) )
@@ -84,16 +84,25 @@ mode_t fs_mode (char *restrict filepath) {
   return file_status.st_mode;
 }
 
+int fs_parent_mode (const char *restrict filename)
+{
+  mode_t mode;
+  char *restrict basepath;
+  basepath = (char *restrict) malloc(sizeof(filename));
+  realloc(basepath, fs_basepath(filename, basepath));
+  if((mode = fs_mode(basepath)))
+  {
+    return mode;
+  }
+  free(basepath);
+  return -1;
+}
+
 int fs_mkdir (const char *restrict dirname)
 {
-  char *basepath = malloc(sizeof(dirname));
-  mode_t mode;
-
   if( !fs_exsists(dirname) )
   {
-    realloc(basepath, fs_basepath(dirname, basepath));
-    mode = fs_mode(basepath);
-    mkdir(dirname, mode);
+    mkdir(dirname, fs_parent_mode(dirname));
     return 1;
   } else
   {
@@ -114,9 +123,18 @@ int fs_rm (const char* filename)
 
 int fs_cp (const char *restrict src, const char *restrict dst)
 {
-  if(fs_exsists(src))
+  if( fs_exsists(src) )
   {
     return 1;
   }
   return 0;
+}
+
+int write_string_to_file (
+  const char *restrict filename,
+  const char *restrict string
+)
+{
+
+  return 1;
 }
