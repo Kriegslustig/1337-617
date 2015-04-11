@@ -60,15 +60,39 @@ int fs_basepath (
   return basepath_length;
 }
 
+int fs_exsists (const char *restrict filepath)
+{
+  struct stat file_status = {0};
+  if( stat(filepath, &file_status) == -1 )
+  {
+    return 0;
+  }
+  return 1;
+}
+
+mode_t fs_mode (char *restrict filepath) {
+  struct stat file_status = {0};
+  if( !fs_exsists(filepath) )
+  {
+    printf("No suchfile:");
+    print_array(filepath);
+    printf("\n");
+    return 0;
+  }
+  stat(filepath, &file_status);
+  return file_status.st_mode;
+}
+
 int fs_mkdir (const char *restrict dirname)
 {
   char *basepath = malloc(sizeof(dirname));
-  struct stat file_status = {0};
-  if( stat(dirname, &file_status) == -1 )
+  mode_t mode;
+
+  if( !fs_exsists(dirname) )
   {
     realloc(basepath, fs_basepath(dirname, basepath));
-    stat(basepath, &file_status);
-    mkdir(dirname, file_status.st_mode);
+    mode = fs_mode(basepath);
+    mkdir(dirname, mode);
     return 1;
   } else
   {
