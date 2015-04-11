@@ -111,3 +111,12 @@ int fs_rm (const char* filename)
   }
   return 0;
 }
+
+int fs_cp (const char *restrict src, const char *restrict dst)
+{
+  if(fs_exsists(src))
+  {
+    return 1;
+  }
+  return 0;
+}
