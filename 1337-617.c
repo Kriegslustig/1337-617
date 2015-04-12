@@ -57,6 +57,13 @@ int g3n_c0_1m17 (char *restrict commit_id)
 }
 
 /*
+ * c0m17 stands for commit
+ * :new_commit and :last_commit are placeholders for commit ids
+ * Copies the stuff from .1337-617/:last_commit to .1337-617/:new_commit
+ * Then it overrides /:new_commit with /staged
+ */
+
+/*
  * _1n17 is leet for init.
  * This function initializes a 1337-617 repo.
  * Meaning it creates a directory with the passed name
