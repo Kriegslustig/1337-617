@@ -1,6 +1,15 @@
 #include <util.h>
 
 /*
+ * r4n00m_1h4r
+ * Generates a singe random character
+ */
+int r4n00m_1h4r (void)
+{
+  return rand() % 255;
+}
+
+/*
  * _h45h stands for hash
  * it simply creates a random hash of the passed length
  */
