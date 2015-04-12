@@ -153,3 +153,27 @@ int write_string_to_file (
   }
   return 0;
 }
+
+int fs_filesize (const char *restrict filename) {
+  struct stat file_status = {0};
+  stat(filename, &file_status);
+  return file_status.st_size;
+}
+
+char *restrict read_string_from_file (
+  const char *restrict filename
+)
+{
+  FILE *file_stream = NULL;
+  char *restrict file_content;
+  off_t file_size = 0;
+  if( fs_exsists(filename) )
+  {
+    file_size = fs_filesize(filename);
+    file_content = malloc(file_size);
+    file_stream = fopen(filename, "r");
+    fread(file_content, sizeof(file_content), file_size, file_stream);
+    return file_content;
+  }
+  return 0;
+}
