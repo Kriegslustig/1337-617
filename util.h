@@ -131,6 +131,7 @@ int fs_cp (const char *restrict src, const char *restrict dst)
 {
   if( fs_exsists(src) )
   {
+    link(src, dst);
     return 1;
   }
   return 0;
@@ -160,9 +161,7 @@ int fs_filesize (const char *restrict filename) {
   return file_status.st_size;
 }
 
-char *restrict read_string_from_file (
-  const char *restrict filename
-)
+char *restrict read_string_from_file (const char *restrict filename)
 {
   FILE *file_stream = NULL;
   char *restrict file_content;
