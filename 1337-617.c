@@ -32,6 +32,12 @@ int _h45h (
  */
 int c3c0_h45h (const char *restrict hash)
 {
+  char filepath[sizeof(hash) + 10] = ".1337-617/"; // The 10 is for `.1337-617/`
+  strcat(hash, filepath);
+  if( fs_exsists(filepath) )
+  {
+    return 0;
+  }
   return 1;
 }
 
