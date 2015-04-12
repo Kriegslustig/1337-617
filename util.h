@@ -129,9 +129,18 @@ int fs_rm (const char* filename)
 
 int fs_cp (const char *restrict src, const char *restrict dst)
 {
+  char buffer[4096];
+  int size;
+  FILE *src_file;
+  FILE *dst_file;
   if( fs_exsists(src) )
   {
-    link(src, dst);
+    src_file = fopen(src, "r");
+    dst_file = fopen(dst, "w");
+    while((size = fread(buffer, 1, 4096, src_file)) > 0)
+      fwrite(buffer, 1, size, dst_file);
+    fclose(src_file);
+    fclose(dst_file);
     return 1;
   }
   return 0;
