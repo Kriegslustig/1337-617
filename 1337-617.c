@@ -1,6 +1,7 @@
 #include <util.h>
 
 const int commit_hash_length = 40;
+const char standard_directory[] = ".1337-617";
 
 /*
  * r4n00m_1h4r
@@ -35,7 +36,7 @@ int h45h (
 int c3c0_h45h (char *restrict hash)
 {
   char filepath[sizeof(hash) + 10] = ".1337-617/"; // The 10 is for `.1337-617/`
-  strcat(hash, filepath);
+  strcat(filepath, hash);
   if( fs_exsists(filepath) )
   {
     return 0;
@@ -64,5 +65,13 @@ int g3n_c0_1m17 (char *restrict commit_id)
  */
 int _1n17 (char *restrict repo_name)
 {
+  char standard_directory_path[sizeof(repo_name) + sizeof(standard_directory) + 1];
+  strcpy(standard_directory_path, repo_name);
+  strcat(standard_directory_path, "/");
+  strcat(standard_directory_path, standard_directory);
+
+  fs_mkdir(repo_name);
+  fs_mkdir(standard_directory_path);
+
   return 1;
 }
