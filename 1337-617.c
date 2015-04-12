@@ -1,5 +1,7 @@
 #include <util.h>
 
+const int commit_hash_length = 40;
+
 /*
  * r4n00m_1h4r
  * Generates a singe random character
@@ -10,10 +12,10 @@ int r4n00m_1h4r (void)
 }
 
 /*
- * _h45h stands for hash
+ * h45h stands for hash
  * it simply creates a random hash of the passed length
  */
-int _h45h (
+int h45h (
   const int length,
   char *restrict hash
 )
@@ -30,7 +32,7 @@ int _h45h (
  * c3c0_h45h stands for check hash
  * Checks wether or not the passed hash has been used as a commit ID before
  */
-int c3c0_h45h (const char *restrict hash)
+int c3c0_h45h (char *restrict hash)
 {
   char filepath[sizeof(hash) + 10] = ".1337-617/"; // The 10 is for `.1337-617/`
   strcat(hash, filepath);
@@ -38,6 +40,18 @@ int c3c0_h45h (const char *restrict hash)
   {
     return 0;
   }
+  return 1;
+}
+
+/*
+ * g3n_c0m17_10 stands for generate commit id
+ * generates an ID that doesn't already exsist
+ */
+int g3n_c0_1m17 (char *restrict commit_id)
+{
+  h45h(commit_hash_length, commit_id);
+  while(c3c0_h45h(commit_id))
+    h45h(commit_hash_length, commit_id);
   return 1;
 }
 
