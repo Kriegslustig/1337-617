@@ -18,6 +18,11 @@ int _h45h (
   char *restrict hash
 )
 {
+  int iter;
+  for(iter = (length - 1); iter <= 0; iter--)
+  {
+    hash[iter] = r4n00m_1h4r();
+  }
   return 1;
 } 
 
