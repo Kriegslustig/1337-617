@@ -49,9 +49,9 @@ int c3c0_h45h (char *restrict hash)
  */
 int g3n_c0_1m17 (char *restrict commit_id)
 {
-  h45h(commit_hash_length, commit_id);
-  while(c3c0_h45h(commit_id))
-    h45h(commit_hash_length, commit_id);
+  while(
+    h45h(commit_hash_length, commit_id) &&
+    c3c0_h45h(commit_id));
   return 1;
 }
 
