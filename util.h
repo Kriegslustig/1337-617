@@ -18,6 +18,12 @@ void print_array (char *string) {
   } while( *(string++) != 0 );
 }
 
+void fprint_array (FILE *some_file, const char *restrict string) {
+  do {
+    fprintf(some_file, "%c", string[0]);
+  } while( *(string++) != 0 );
+}
+
 void substring (
   const char *restrict string,
   const int from,
@@ -95,7 +101,7 @@ int fs_parent_mode (const char *restrict filename)
     return mode;
   }
   free(basepath);
-  return -1;
+  return 0;
 }
 
 int fs_mkdir (const char *restrict dirname)
@@ -135,6 +141,15 @@ int write_string_to_file (
   const char *restrict string
 )
 {
-
-  return 1;
+  FILE *file_stream;
+  if( fs_parent_mode(filename) )
+  {
+    if( (file_stream = fopen(filename, "w")) )
+    {
+      fprint_array(file_stream, string);
+      fclose(file_stream);
+      return 1;
+    }
+  }
+  return 0;
 }
