@@ -8,14 +8,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <dirent.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
 
-void print_array (char *string) {
+void print_array (const char *restrict string) {
+  int itrator = 0;
   do {
-    printf("%c", string[0]);
-  } while( *(string++) != 0 );
+    printf("%c", string[itrator]);
+  } while( string[itrator++] != 0 );
 }
 
 void fprint_array (FILE *some_file, const char *restrict string) {
@@ -77,7 +79,7 @@ int fs_basepath (
   return basepath_length;
 }
 
-mode_t fs_mode (char *restrict filepath) {
+mode_t fs_mode (const char *restrict filepath) {
   struct stat file_status = {0};
   if( !fs_exsists(filepath) )
   {
@@ -112,7 +114,9 @@ int fs_mkdir (const char *restrict dirname)
     return 1;
   } else
   {
-    printf("A something with this name already exsists.");
+    printf("A something with this name already exsists.: ");
+    print_array(dirname);
+    printf("\n");
   }
   return 0;
 }
@@ -142,6 +146,63 @@ int fs_cp (const char *restrict src, const char *restrict dst)
     fclose(src_file);
     fclose(dst_file);
     return 1;
+  }
+  return 0;
+}
+
+int fs_is_dir (const char *restrict filepath)
+{
+  if( fs_exsists(filepath) && S_ISDIR(fs_mode(filepath)) )
+  {
+    return 1;
+  }
+  return 0;
+}
+
+int fs_concat_path (
+  const char *restrict basepath,
+  const char *restrict extend_with,
+  char *restrict new_path
+)
+{
+  strcat(new_path, basepath);
+  strcat(new_path, "/");
+  strcat(new_path, extend_with);
+  return sizeof(new_path);
+}
+
+int fs_recursive_copy (
+  const char *restrict source,
+  const char *restrict destination
+)
+{
+  DIR *source_directory;
+  struct dirent *source_directory_list_item;
+  char *restrict new_source = (char *restrict) malloc(sizeof(source) + 255);
+  char *restrict new_destination = (char *restrict) malloc(sizeof(source) + 255);
+  if( fs_exsists(source) )
+  {
+    fs_mkdir(destination);
+    source_directory = opendir(source);
+    while( (source_directory_list_item = readdir(source_directory)) )
+    {
+      if( strcmp(source_directory_list_item->d_name, ".") != 0 && strcmp(source_directory_list_item->d_name, "..") != 0 )
+      {
+        realloc(new_source, fs_concat_path(source, source_directory_list_item->d_name, new_source));
+        realloc(new_destination, fs_concat_path(destination, source_directory_list_item->d_name, new_destination));
+        if( fs_is_dir(new_source) )
+        {
+          fs_recursive_copy(new_source, new_destination);
+        } else
+        {
+          fs_cp(new_source, new_destination);
+        }
+        free(new_source);
+        free(new_destination);
+      }
+    }
+    return 1;
+    closedir(source_directory);
   }
   return 0;
 }
