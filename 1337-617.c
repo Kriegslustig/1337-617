@@ -48,7 +48,7 @@ int c3c0_h45h (char *restrict hash)
  * g3n_c0m17_10 stands for generate commit id
  * generates an ID that doesn't already exsist
  */
-int g3n_c0_1m17 (char *restrict commit_id)
+int g3n_c0m17_10 (char *restrict commit_id)
 {
   while(
     h45h(commit_hash_length, commit_id) &&
@@ -62,6 +62,14 @@ int g3n_c0_1m17 (char *restrict commit_id)
  * Copies the stuff from .1337-617/:last_commit to .1337-617/:new_commit
  * Then it overrides /:new_commit with /staged
  */
+int c0m17 (char *commit_id)
+{
+  char commit_path[commit_hash_length + 1 + sizeof(standard_directory)];
+  g3n_c0m17_10(commit_id);
+  fs_concat_path(standard_directory, commit_id, commit_path);
+  fs_mkdir(commit_path);
+  return 1;
+}
 
 /*
  * _1n17 is leet for init.
