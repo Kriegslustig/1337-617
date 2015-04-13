@@ -186,10 +186,10 @@ int fs_recursive_copy (
     source_directory = opendir(source);
     while( (source_directory_list_item = readdir(source_directory)) )
     {
-      if( strcmp(source_directory_list_item->d_name, ".") != 0 && strcmp(source_directory_list_item->d_name, "..") != 0 )
+      if( (source_directory_list_item->d_name)[0] != '.' )
       {
-        realloc(new_source, fs_concat_path(source, source_directory_list_item->d_name, new_source));
-        realloc(new_destination, fs_concat_path(destination, source_directory_list_item->d_name, new_destination));
+        fs_concat_path(source, source_directory_list_item->d_name, new_source);
+        fs_concat_path(destination, source_directory_list_item->d_name, new_destination);
         if( fs_is_dir(new_source) )
         {
           fs_recursive_copy(new_source, new_destination);
