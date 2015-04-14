@@ -252,6 +252,7 @@ char *restrict fs_read_nth_line (
 {
   char *restrict file_content;
   char *tmp_string;
+  char *tmp_pointer;
   char *string;
   int current_line = 0;
 
@@ -262,14 +263,19 @@ char *restrict fs_read_nth_line (
     while(
       current_line++ < nth &&
       (tmp_string = strchr(tmp_string, '\n') + 1)
-    );
-    if(sizeof(tmp_string) > 0)
+    )
+      ;
+    tmp_pointer = strchr(tmp_string, '\n');
+    if(tmp_pointer)
     {
-      string = substring(tmp_string, 0, (strchr(tmp_string, '\n') - tmp_string));
-      free(file_content);
-      return string;
+      string = substring(tmp_string, 0, (tmp_pointer - tmp_string));
+    } else
+    {
+      string = malloc(strlen(tmp_string));
+      string = tmp_string;
     }
     free(file_content);
+    return string;
   }
   return 0;
 }
