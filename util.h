@@ -265,7 +265,6 @@ char *restrict fs_read_nth_line (
     );
     if(sizeof(tmp_string) > 0)
     {
-      printf("%lu\n", strchr(tmp_string, '\n') - tmp_string);
       string = substring(tmp_string, 0, (strchr(tmp_string, '\n') - tmp_string));
       free(file_content);
       return string;
@@ -280,21 +279,25 @@ char *restrict fs_read_nth_line_from_end (
   const char *filename
 )
 {
-  char tmp_string[] = "";
+  char *restrict file_content;
+  char *tmp_string;
   char *string;
 
   if( fs_exsists(filename) )
   {
-    strcat(tmp_string, read_string_from_file(filename));
+    file_content = read_string_from_file(filename);
+    tmp_string = file_content;
     while(
       nth-- >= 0 &&
-      (strcpy(tmp_string, strrchr(tmp_string, '\n')))
+      (tmp_string = strrchr(tmp_string, '\n'))
     );
     if(sizeof(tmp_string) > 0)
     {
       string = substring(tmp_string, 0, (tmp_string - strchr(tmp_string, '\n')));
+      free(file_content);
       return string;
     }
+    free(file_content);
   }
   return 0;
 }
