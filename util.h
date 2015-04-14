@@ -246,3 +246,52 @@ char *restrict read_string_from_file (const char *restrict filename)
   }
   return 0;
 }
+
+int fs_read_nth_line (
+  const int nth,
+  const char *filename,
+  char *string
+)
+{
+  char tmp_string[] = "";
+  int current_line = 0;
+
+  if( fs_exsists(filename) )
+  {
+    strcat(tmp_string, read_string_from_file(filename));
+    while(
+      current_line++ <= nth &&
+      (strcpy(tmp_string, strchr(tmp_string, '\n')))
+    );
+    if(sizeof(tmp_string) > 0)
+    {
+      substring(tmp_string, 0, (tmp_string - strchr(tmp_string, '\n')), string);
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int fs_read_nth_line_from_end (
+  int nth,
+  const char *filename,
+  char *string
+)
+{
+  char tmp_string[] = "";
+
+  if( fs_exsists(filename) )
+  {
+    strcat(tmp_string, read_string_from_file(filename));
+    while(
+      nth-- >= 0 &&
+      (strcpy(tmp_string, strrchr(tmp_string, '\n')))
+    );
+    if(sizeof(tmp_string) > 0)
+    {
+      substring(tmp_string, 0, (tmp_string - strchr(tmp_string, '\n')), string);
+      return 1;
+    }
+  }
+  return 0;
+}
