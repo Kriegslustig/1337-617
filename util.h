@@ -26,28 +26,29 @@ void fprint_array (FILE *some_file, const char *restrict string) {
   } while( *(string++) != 0 );
 }
 
-void substring (
+char *restrict substring (
   const char *restrict string,
   const int from,
-  const int length,
-  char *restrict new_string
+  const int length
 )
 {
   int current_position = 0;
+  char *restrict new_string = malloc(length);
   do {
     new_string[current_position] = string[from + current_position];
   } while( current_position++ < (length - 1) );
+  return new_string;
 }
 
-void substr (
+char *restrict substr (
   const char *restrict string,
   const int from,
-  const int to,
-  char *restrict new_array
+  const int to
 )
 {
   int length = to - from;
-  substring(string, from, length, new_array);
+  char *restrict new_string = substring(string, from, length);
+  return new_string;
 }
 
 int fs_exsists (const char *restrict filepath)
@@ -60,23 +61,22 @@ int fs_exsists (const char *restrict filepath)
   return 1;
 }
 
-int fs_basepath (
-  const char *restrict filepath,
-  char *restrict basepath
-)
+char *restrict fs_basepath (const char *restrict filepath)
 {
   int basepath_length = 0;
   char *restrict last_char;
+  char *restrict basepath;
   last_char = strrchr(filepath, '/');
   if(last_char != 0)
   {
     basepath_length = last_char - filepath;
-    substring(filepath, 0, basepath_length, basepath);
+    basepath = substring(filepath, 0, basepath_length);
   } else
   {
+    basepath = malloc(1);
     *basepath = '.';
   }
-  return basepath_length;
+  return basepath;
 }
 
 mode_t fs_mode (const char *restrict filepath) {
@@ -95,9 +95,7 @@ mode_t fs_mode (const char *restrict filepath) {
 int fs_parent_mode (const char *restrict filename)
 {
   mode_t mode;
-  char *restrict basepath;
-  basepath = (char *restrict) malloc(sizeof(filename));
-  realloc(basepath, fs_basepath(filename, basepath));
+  char *restrict basepath = fs_basepath(filename);
   if((mode = fs_mode(basepath)))
   {
     return mode;
@@ -241,44 +239,49 @@ char *restrict read_string_from_file (const char *restrict filename)
     file_size = fs_filesize(filename);
     file_content = malloc(file_size);
     file_stream = fopen(filename, "r");
-    fread(file_content, sizeof(file_content), file_size, file_stream);
+    fread(file_content, 1, file_size, file_stream);
     return file_content;
   }
   return 0;
 }
 
-int fs_read_nth_line (
+char *restrict fs_read_nth_line (
   const int nth,
-  const char *filename,
-  char *string
+  const char *filename
 )
 {
-  char tmp_string[] = "";
+  char *restrict file_content;
+  char *tmp_string;
+  char *string;
   int current_line = 0;
 
   if( fs_exsists(filename) )
   {
-    strcat(tmp_string, read_string_from_file(filename));
+    file_content = read_string_from_file(filename);
+    tmp_string = file_content;
     while(
-      current_line++ <= nth &&
-      (strcpy(tmp_string, strchr(tmp_string, '\n')))
+      current_line++ < nth &&
+      (tmp_string = strchr(tmp_string, '\n') + 1)
     );
     if(sizeof(tmp_string) > 0)
     {
-      substring(tmp_string, 0, (tmp_string - strchr(tmp_string, '\n')), string);
-      return 1;
+      printf("%lu\n", strchr(tmp_string, '\n') - tmp_string);
+      string = substring(tmp_string, 0, (strchr(tmp_string, '\n') - tmp_string));
+      free(file_content);
+      return string;
     }
+    free(file_content);
   }
   return 0;
 }
 
-int fs_read_nth_line_from_end (
+char *restrict fs_read_nth_line_from_end (
   int nth,
-  const char *filename,
-  char *string
+  const char *filename
 )
 {
   char tmp_string[] = "";
+  char *string;
 
   if( fs_exsists(filename) )
   {
@@ -289,8 +292,8 @@ int fs_read_nth_line_from_end (
     );
     if(sizeof(tmp_string) > 0)
     {
-      substring(tmp_string, 0, (tmp_string - strchr(tmp_string, '\n')), string);
-      return 1;
+      string = substring(tmp_string, 0, (tmp_string - strchr(tmp_string, '\n')));
+      return string;
     }
   }
   return 0;
