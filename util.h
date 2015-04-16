@@ -240,9 +240,50 @@ char *restrict read_string_from_file (const char *restrict filename)
     file_content = malloc(file_size);
     file_stream = fopen(filename, "r");
     fread(file_content, 1, file_size, file_stream);
+    fclose(file_stream);
     return file_content;
   }
   return 0;
+}
+
+char *restrict fs_first_line (
+  FILE *file_stream
+)
+{
+  FILE *file_stream_clone = file_stream;
+  char char_buffer[1];
+  char *line_buffer = malloc(1);
+  int current_position = 1;
+
+  while(
+    fread(char_buffer, 1, 1, file_stream_clone) &&
+    *char_buffer != '\n'
+  )
+  {
+
+    line_buffer[current_position - 1] = *char_buffer;
+    fseek(file_stream_clone, current_position++, SEEK_SET);
+    line_buffer = realloc(line_buffer, current_position);
+
+    printf("%d, %c, %lo\n", current_position - 1, *char_buffer, sizeof(line_buffer));
+    print_array(line_buffer);
+    printf("\n");
+  }
+  return line_buffer;
+}
+
+int find_next_in_filestream (
+  FILE *file_stream,
+  char some_char
+)
+{
+  int current_position = 0;
+  char file_buffer[1];
+  while(
+    fread(file_buffer, 1, current_position++, file_stream) &&
+    *file_buffer != some_char
+  );
+  return --current_position;
 }
 
 char *restrict fs_read_nth_line (
@@ -250,31 +291,21 @@ char *restrict fs_read_nth_line (
   const char *filename
 )
 {
-  char *restrict file_content;
-  char *tmp_string;
-  char *tmp_pointer;
+  FILE *file_stream;
   char *string;
   int current_line = 0;
+  int char_offset = 0;
 
   if( fs_exsists(filename) )
   {
-    file_content = read_string_from_file(filename);
-    tmp_string = file_content;
+    file_stream = fopen(filename, "r");
     while(
       current_line++ < nth &&
-      (tmp_string = strchr(tmp_string, '\n') + 1)
-    )
-      ;
-    tmp_pointer = strchr(tmp_string, '\n');
-    if(tmp_pointer)
-    {
-      string = substring(tmp_string, 0, (tmp_pointer - tmp_string));
-    } else
-    {
-      string = malloc(strlen(tmp_string));
-      string = tmp_string;
-    }
-    free(file_content);
+      (char_offset = find_next_in_filestream(file_stream, '\n') + 1) &&
+      (fseek(file_stream, char_offset, SEEK_CUR))
+    );
+    printf("%d\n", char_offset);
+    string = fs_first_line(file_stream);
     return string;
   }
   return 0;
@@ -287,6 +318,7 @@ char *restrict fs_read_nth_line_from_end (
 {
   char *restrict file_content;
   char *tmp_string;
+  char *tmp_pointer;
   char *string;
 
   if( fs_exsists(filename) )
@@ -294,15 +326,24 @@ char *restrict fs_read_nth_line_from_end (
     file_content = read_string_from_file(filename);
     tmp_string = file_content;
     while(
-      nth-- >= 0 &&
-      (tmp_string = strrchr(tmp_string, '\n'))
-    );
-    if(sizeof(tmp_string) > 0)
+      --nth >= 0 &&
+      (tmp_pointer = strrchr(tmp_string, '\n'))
+    )
     {
-      string = substring(tmp_string, 0, (tmp_string - strchr(tmp_string, '\n')));
-      free(file_content);
-      return string;
+      *tmp_pointer = '\0';
+      printf("%lo\n", strlen(tmp_string));
     }
+    print_array(tmp_string);
+    printf("\n");
+    tmp_pointer = strrchr(tmp_string, '\n');
+    if( tmp_pointer )
+      string = substring(tmp_pointer + 1, 0, tmp_pointer - tmp_string);
+    else
+    {
+      string = malloc(strlen(tmp_string));
+      string = tmp_string;
+    }
+    return string;
     free(file_content);
   }
   return 0;
