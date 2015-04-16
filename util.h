@@ -264,10 +264,6 @@ char *restrict fs_first_line (
     line_buffer[current_position - 1] = *char_buffer;
     fseek(file_stream_clone, current_position++, SEEK_SET);
     line_buffer = realloc(line_buffer, current_position);
-
-    printf("%d, %c, %lo\n", current_position - 1, *char_buffer, sizeof(line_buffer));
-    print_array(line_buffer);
-    printf("\n");
   }
   return line_buffer;
 }
