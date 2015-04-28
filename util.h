@@ -278,13 +278,11 @@ int find_next_in_filestream (
 
   while(
     *file_buffer != some_char &&
-    current_position < 100
+    current_position < 100 &&
+    fread(file_buffer, 1, 1, file_stream) > -1
   )
   {
-    if(fread(file_buffer, 1, 1, file_stream) > -1)
-      return -1;
     current_position++;
-    printf("%d, %c \n", current_position, *file_buffer);
   }
   return --current_position;
 }
