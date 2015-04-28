@@ -281,9 +281,7 @@ int find_next_in_filestream (
     current_position < 100 &&
     fread(file_buffer, 1, 1, file_stream) > -1
   )
-  {
     current_position++;
-  }
   return --current_position;
 }
 
