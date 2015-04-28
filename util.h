@@ -273,16 +273,16 @@ int find_next_in_filestream (
   char some_char
 )
 {
-  int current_position = 1;
+  int current_position = 0;
   char file_buffer[1];
 
   while(
-    *file_buffer != some_char &&
-    current_position < 100 &&
-    fread(file_buffer, 1, 1, file_stream) > -1
+    fread(file_buffer, 1, 1, file_stream) != 0 &&
+    *file_buffer != some_char
   )
     current_position++;
-  return --current_position;
+  fseek(file_stream, ((current_position + 1) * -1), 1);
+  return current_position;
 }
 
 char *restrict fs_read_nth_line (
