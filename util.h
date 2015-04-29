@@ -283,6 +283,9 @@ int find_next_in_filestream (
   return current_position;
 }
 
+/*
+ * Finds the last occurence of char, looking from SEEK_CUR
+ */
 int find_last_in_filestream (
   FILE *file_stream,
   const char find_this
@@ -294,10 +297,9 @@ int find_last_in_filestream (
 
   do
   {
-    fseek(stream_clone, --offset, 2);
+    fseek(stream_clone, --offset, 1);
     fread(current_character, 1, 1, file_stream);
-    fseek(stream_clone, offset, 2);
-    printf("%d\n", offset);
+    fseek(stream_clone, offset, 1);
   } while(
     *current_character != find_this &&
     ftell(stream_clone) > 0
