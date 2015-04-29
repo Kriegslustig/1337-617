@@ -250,19 +250,20 @@ char *restrict fs_first_line (
   FILE *file_stream
 )
 {
+  const long int origin = ftell(file_stream);
   char char_buffer[1];
   char *line_buffer = malloc(1);
-  int current_position = 1;
+  int current_position = 0;
 
   while(
-    fread(char_buffer, 1, 1, file_stream) &&
+    fread(char_buffer, 1, 1, file_stream) > 0 &&
     *char_buffer != '\n'
   )
   {
-    line_buffer[current_position - 1] = *char_buffer;
     line_buffer = realloc(line_buffer, ++current_position);
+    line_buffer[current_position - 1] = *char_buffer;
   }
-  fseek(file_stream, current_position * -1, 1);
+  fseek(file_stream, origin, 0);
   return line_buffer;
 }
 
@@ -271,6 +272,7 @@ int find_next_in_filestream (
   char some_char
 )
 {
+  const long int origin = ftell(file_stream);
   int current_position = 0;
   char file_buffer[1];
 
@@ -279,19 +281,20 @@ int find_next_in_filestream (
     *file_buffer != some_char
   )
     current_position++;
-  fseek(file_stream, ((current_position + 1) * -1), 1);
+  fseek(file_stream, origin, 1);
   return current_position;
 }
 
 /*
  * Finds the last occurence of char, looking from SEEK_CUR
+ * and returns a position relative to SEEK_SET
  */
 int find_last_in_filestream (
   FILE *file_stream,
   const char find_this
 )
 {
-  FILE *stream_clone = file_stream;
+  const long int origin = ftell(file_stream);
   char current_character[1];
   int offset = 0;
 
@@ -299,15 +302,15 @@ int find_last_in_filestream (
   do
   {
     offset--;
-    fseek(stream_clone, -1, 1);
-    fread(current_character, 1, 1, stream_clone);
-    fseek(stream_clone, -1, 1);
-    printf("%c, %lo\n", *current_character, ftell(stream_clone));
+    fseek(file_stream, -1, 1);
+    fread(current_character, 1, 1, file_stream);
+    fseek(file_stream, -1, 1);
   } while(
     *current_character != find_this &&
-    ftell(stream_clone) > 0
+    ftell(file_stream) > 0
   );
-  return ftell(stream_clone);
+  fseek(file_stream, origin, 0);
+  return ftell(file_stream);
 }
 
 char *restrict fs_read_nth_line (
@@ -333,11 +336,16 @@ char *restrict fs_read_nth_line_from_end (
   int nth
 )
 {
-  FILE *stream_clone = file_stream;
+  const long int origin = ftell(file_stream);
+  char *restrict return_string;
   int current_index = 0;
 
-  fseek(stream_clone, 0, 2);
-  while(current_index++ > nth)
-    fseek(stream_clone, find_last_in_filestream(stream_clone, '\n'), 0);
-  return fs_first_line(stream_clone);
+  fseek(file_stream, 0, 2);
+  do
+  {
+    fseek(file_stream, find_last_in_filestream(file_stream, '\n'), 0);
+  } while(current_index++ < nth);
+  return_string = fs_first_line(file_stream);
+  fseek(file_stream, origin, 0);
+  return return_string;
 }
