@@ -283,6 +283,28 @@ int find_next_in_filestream (
   return current_position;
 }
 
+int find_last_in_filestream (
+  FILE *file_stream,
+  const char find_this
+)
+{
+  FILE *stream_clone = file_stream;
+  char current_character[1];
+  int offset = 0;
+
+  do
+  {
+    fseek(stream_clone, --offset, 2);
+    fread(current_character, 1, 1, file_stream);
+    fseek(stream_clone, offset, 2);
+    printf("%d\n", offset);
+  } while(
+    *current_character != find_this &&
+    ftell(stream_clone) > 0
+  );
+  return ftell(stream_clone);
+}
+
 char *restrict fs_read_nth_line (
   FILE *file_stream,
   const int nth
