@@ -66,7 +66,8 @@ char *restrict fs_basepath (const char *restrict filepath)
   return basepath;
 }
 
-mode_t fs_mode (const char *restrict filepath) {
+mode_t fs_mode (const char *restrict filepath)
+{
   struct stat file_status = {0};
   if( !fs_exsists(filepath) )
   {
@@ -206,7 +207,8 @@ int write_string_to_file (
   return 0;
 }
 
-int fs_filesize (const char *restrict filename) {
+int fs_filesize (const char *restrict filename)
+{
   struct stat file_status = {0};
   stat(filename, &file_status);
   return file_status.st_size;

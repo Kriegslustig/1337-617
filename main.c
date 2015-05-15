@@ -7,7 +7,8 @@ int main (
 {
   int returnValue = 1;
   char *action;
-  if(argc < 2) {
+  if( argc < 2 )
+  {
     printf("Go fuck urself\n");
     return 1;
   }
@@ -16,11 +17,13 @@ int main (
 
   if(strcmp(action, "1n17") == 0)
   {
-    if(argv[2]) {
+    if(argv[2])
+    {
       _1n17(argv[2]);
       returnValue = 0;
     }
-    else {
+    else
+    {
       printf("Failed to init please pass a repo name.");
       returnValue = 1;
     }
