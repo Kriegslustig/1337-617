@@ -117,7 +117,7 @@ int _1n17 (char *restrict repo_name)
   standard_directory_path = fs_concat_path(repo_path, standard_directory);
   staging_directory_path = fs_concat_path(repo_path, staging_directory);
 
-  if(fs_mkdir(repo_path)
+  if( fs_mkdir(repo_path )
     && fs_mkdir(standard_directory_path)
     && fs_mkdir(staging_directory_path))
   {

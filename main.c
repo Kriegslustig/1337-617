@@ -15,9 +15,9 @@ int main (
   action = (char *) malloc(sizeof(argv[1]));
   strcpy(action, argv[1]);
 
-  if(strcmp(action, "1n17") == 0)
+  if( strcmp(action, "1n17" ) == 0)
   {
-    if(argv[2])
+    if( argv[2] )
     {
       _1n17(argv[2]);
       returnValue = 0;

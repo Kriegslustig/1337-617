@@ -54,7 +54,7 @@ char *restrict fs_basepath (const char *restrict filepath)
   char *restrict last_char;
   char *restrict basepath;
   last_char = strrchr(filepath, '/');
-  if(last_char != 0)
+  if( last_char != 0 )
   {
     basepath_length = last_char - filepath;
     basepath = substring(filepath, 0, basepath_length);
@@ -93,7 +93,7 @@ int fs_mkdir (const char *restrict dirname)
   int parent_mode;
   if( !fs_exsists(dirname) )
   {
-    if((parent_mode = fs_parent_mode(dirname)))
+    if( (parent_mode = fs_parent_mode(dirname)) )
     {
       mkdir(dirname, parent_mode);
       return 1;
