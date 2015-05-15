@@ -29,7 +29,7 @@ int h45h (
     hash[iter] = r4n00m_1h4r();
   }
   return 1;
-} 
+}
 
 /*
  * c3c0_h45h stands for check hash
@@ -96,6 +96,8 @@ int c0m17 (char *commit_id)
   {
     fs_recursive_copy(commit_path, last_commit);
     fs_recursive_copy(commit_path, staging_directory);
+  } else {
+    return 0;
   }
   return 1;
 }
@@ -110,9 +112,7 @@ int c0m17 (char *commit_id)
 int _1n17 (char *restrict repo_name)
 {
   char standard_directory_path[sizeof(repo_name) + sizeof(standard_directory) + 1];
-  strcpy(standard_directory_path, repo_name);
-  strcat(standard_directory_path, "/");
-  strcat(standard_directory_path, standard_directory);
+  fs_concat_path(repo_name, standard_directory, standard_directory_path);
 
   fs_mkdir(repo_name);
   fs_mkdir(standard_directory_path);
