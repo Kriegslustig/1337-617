@@ -110,19 +110,22 @@ int c0m17 (char *commit_id)
  */
 int _1n17 (char *restrict repo_name)
 {
+  int returnValue = 0;
   char *restrict repo_path = fs_concat_path(".", repo_name);
   char *restrict standard_directory_path;
+  char *restrict staging_directory_path;
   standard_directory_path = fs_concat_path(repo_path, standard_directory);
+  staging_directory_path = fs_concat_path(repo_path, staging_directory);
 
-  if(fs_mkdir(repo_path)) {
-    if(fs_mkdir(standard_directory_path)) {
-      free(repo_path);
-      free(standard_directory_path);
-      return 1;
-    }
+  if(fs_mkdir(repo_path)
+    && fs_mkdir(standard_directory_path)
+    && fs_mkdir(staging_directory_path))
+  {
+      returnValue = 1;
   }
 
   free(repo_path);
   free(standard_directory_path);
-  return 0;
+  free(staging_directory_path);
+  return returnValue;
 }
