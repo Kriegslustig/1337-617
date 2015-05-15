@@ -5,6 +5,7 @@ int main (
   char *argv[]
 )
 {
+  int returnValue = 1;
   char *action;
   if(argc < 2) {
     printf("Go fuck urself\n");
@@ -17,18 +18,16 @@ int main (
   {
     if(argv[2]) {
       _1n17(argv[2]);
-      free(action);
-      return 0;
+      returnValue = 0;
     }
     else {
       printf("Failed to init please pass a repo name.");
-      free(action);
-      return 1;
+      returnValue = 1;
     }
   } else
   {
     printf("No such action.");
-    free(action);
-    return 1;
   }
+  free(action);
+  return returnValue;
 }
