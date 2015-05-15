@@ -88,23 +88,27 @@ mode_t fs_mode (const char *restrict filepath) {
 
 int fs_parent_mode (const char *restrict filename)
 {
-  mode_t mode;
+  int returnValue = 0;
   char *restrict basepath = fs_basepath(filename);
-  if((mode = fs_mode(basepath)))
-  {
-    return mode;
-  }
+
+  returnValue = fs_mode(basepath);
   free(basepath);
-  return 1;
+  return returnValue;
 }
 
 int fs_mkdir (const char *restrict dirname)
 {
+  int parent_mode;
   if( !fs_exsists(dirname) )
   {
-    print_array(dirname);
-    mkdir(dirname, fs_parent_mode(dirname));
-    return 1;
+    if((parent_mode = fs_parent_mode(dirname)))
+    {
+      mkdir(dirname, parent_mode);
+      return 1;
+    } else
+    {
+      return 0;
+    }
   } else
   {
     printf("A something with this name already exsists.: ");
