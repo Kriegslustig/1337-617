@@ -13,13 +13,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-void print_array (const char *restrict string) {
-  int itrator = 0;
-  do {
-    printf("%c", string[itrator]);
-  } while( string[itrator++] != 0 );
-}
-
 char *restrict substring (
   const char *restrict string,
   const int from,
@@ -77,9 +70,7 @@ mode_t fs_mode (const char *restrict filepath) {
   struct stat file_status = {0};
   if( !fs_exsists(filepath) )
   {
-    printf("No such file: ");
-    print_array(filepath);
-    printf("\n");
+    printf("No such file: %s\n", filepath);
     return 0;
   }
   stat(filepath, &file_status);
@@ -111,9 +102,7 @@ int fs_mkdir (const char *restrict dirname)
     }
   } else
   {
-    printf("A something with this name already exsists.: ");
-    print_array(dirname);
-    printf("\n");
+    printf("A something with this name already exsists.: %s\n", dirname);
   }
   return 0;
 }
