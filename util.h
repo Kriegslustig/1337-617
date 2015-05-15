@@ -20,12 +20,6 @@ void print_array (const char *restrict string) {
   } while( string[itrator++] != 0 );
 }
 
-void fprint_array (FILE *some_file, const char *restrict string) {
-  do {
-    fprintf(some_file, "%c", string[0]);
-  } while( *(string++) != 0 );
-}
-
 char *restrict substring (
   const char *restrict string,
   const int from,
@@ -214,7 +208,7 @@ int write_string_to_file (
   {
     if( (file_stream = fopen(filename, "w")) )
     {
-      fprint_array(file_stream, string);
+      fprintf(file_stream, "%s", string);
       fclose(file_stream);
       return 1;
     }
