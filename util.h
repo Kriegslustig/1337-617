@@ -298,7 +298,6 @@ int find_last_in_filestream (
   char current_character[1];
   int offset = 0;
 
-
   do
   {
     offset--;
@@ -310,7 +309,7 @@ int find_last_in_filestream (
     ftell(file_stream) > 0
   );
   fseek(file_stream, origin, 0);
-  return ftell(file_stream);
+  return offset;
 }
 
 char *restrict fs_read_nth_line (
@@ -343,8 +342,9 @@ char *restrict fs_read_nth_line_from_end (
   fseek(file_stream, 0, 2);
   do
   {
-    fseek(file_stream, find_last_in_filestream(file_stream, '\n'), 0);
+    fseek(file_stream, find_last_in_filestream(file_stream, '\n'), 1);
   } while(current_index++ < nth);
+  fseek(file_stream, 1, 1);
   return_string = fs_first_line(file_stream);
   fseek(file_stream, origin, 0);
   return return_string;
