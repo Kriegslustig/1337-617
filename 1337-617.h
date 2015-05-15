@@ -81,11 +81,11 @@ char *restrict n7h_c0m17 (const int nth_commit)
  */
 int c0m17 (char *commit_id)
 {
-  char commit_path[commit_hash_length + 1 + sizeof(standard_directory)];
+  char *commit_path;
   char *restrict last_commit;
 
   g3n_c0m17_10(commit_id);
-  fs_concat_path(standard_directory, commit_id, commit_path);
+  commit_path = fs_concat_path(standard_directory, commit_id);
 
   fs_mkdir(commit_path);
 
@@ -94,8 +94,10 @@ int c0m17 (char *commit_id)
     fs_recursive_copy(commit_path, last_commit);
     fs_recursive_copy(commit_path, staging_directory);
   } else {
+    free(commit_path);
     return 0;
   }
+  free(commit_path);
   return 1;
 }
 
@@ -108,11 +110,19 @@ int c0m17 (char *commit_id)
  */
 int _1n17 (char *restrict repo_name)
 {
-  char standard_directory_path[sizeof(repo_name) + sizeof(standard_directory) + 1];
-  fs_concat_path(repo_name, standard_directory, standard_directory_path);
+  char *restrict repo_path = fs_concat_path(".", repo_name);
+  char *restrict standard_directory_path;
+  standard_directory_path = fs_concat_path(repo_path, standard_directory);
 
-  fs_mkdir(repo_name);
-  fs_mkdir(standard_directory_path);
+  if(fs_mkdir(repo_path)) {
+    if(fs_mkdir(standard_directory_path)) {
+      free(repo_path);
+      free(standard_directory_path);
+      return 1;
+    }
+  }
 
-  return 1;
+  free(repo_path);
+  free(standard_directory_path);
+  return 0;
 }

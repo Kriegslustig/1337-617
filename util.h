@@ -83,7 +83,7 @@ mode_t fs_mode (const char *restrict filepath) {
   struct stat file_status = {0};
   if( !fs_exsists(filepath) )
   {
-    printf("No suchfile:");
+    printf("No such file: ");
     print_array(filepath);
     printf("\n");
     return 0;
@@ -101,13 +101,14 @@ int fs_parent_mode (const char *restrict filename)
     return mode;
   }
   free(basepath);
-  return 0;
+  return 1;
 }
 
 int fs_mkdir (const char *restrict dirname)
 {
   if( !fs_exsists(dirname) )
   {
+    print_array(dirname);
     mkdir(dirname, fs_parent_mode(dirname));
     return 1;
   } else
@@ -157,16 +158,14 @@ int fs_is_dir (const char *restrict filepath)
   return 0;
 }
 
-int fs_concat_path (
+char *restrict fs_concat_path (
   const char *restrict basepath,
-  const char *restrict extend_with,
-  char *restrict new_path
+  const char *restrict extend_with
 )
 {
-  strcat(new_path, basepath);
-  strcat(new_path, "/");
-  strcat(new_path, extend_with);
-  return sizeof(new_path);
+  char *restrict new_path = malloc(snprintf(NULL, 0, "%s/%s", basepath, extend_with));
+  sprintf(new_path, "%s/%s", basepath, extend_with);
+  return new_path;
 }
 
 int fs_recursive_copy (
@@ -176,8 +175,8 @@ int fs_recursive_copy (
 {
   DIR *source_directory;
   struct dirent *source_directory_list_item;
-  char *restrict new_source = (char *restrict) malloc(sizeof(source) + 255);
-  char *restrict new_destination = (char *restrict) malloc(sizeof(source) + 255);
+  char *restrict new_source;
+  char *restrict new_destination;
   if( fs_exsists(source) )
   {
     fs_mkdir(destination);
@@ -186,8 +185,8 @@ int fs_recursive_copy (
     {
       if( (source_directory_list_item->d_name)[0] != '.' )
       {
-        fs_concat_path(source, source_directory_list_item->d_name, new_source);
-        fs_concat_path(destination, source_directory_list_item->d_name, new_destination);
+        new_source = fs_concat_path(source, source_directory_list_item->d_name);
+        new_destination = fs_concat_path(destination, source_directory_list_item->d_name);
         if( fs_is_dir(new_source) )
         {
           fs_recursive_copy(new_source, new_destination);
