@@ -161,7 +161,7 @@ char *restrict fs_concat_path (
   const char *restrict extend_with
 )
 {
-  char *restrict new_path = malloc(snprintf(NULL, 0, "%s/%s", basepath, extend_with));
+  char *restrict new_path = malloc(snprintf(NULL, 0, "%s/%s", basepath, extend_with) + 1);
   sprintf(new_path, "%s/%s", basepath, extend_with);
   return new_path;
 }
