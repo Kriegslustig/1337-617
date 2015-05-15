@@ -2,6 +2,8 @@
 
 const int commit_hash_length = 40;
 const char standard_directory[] = ".1337-617";
+const char staging_directory[] = ".1337-617/staged";
+const char index_file[] = ".1337-617/index.txt";
 
 /*
  * r4n00m_1h4r
@@ -57,6 +59,24 @@ int g3n_c0m17_10 (char *restrict commit_id)
 }
 
 /*
+ * n7h_c0m17 stands for nth_commit
+ * Gets the commit id of the nth commit counting from the latest one
+ * Reurns 0 on failure
+ * Returns a pointer to the heap if it succeeds
+ */
+char *restrict n7h_c0m17 (const int nth_commit)
+{
+  char *restrict commit_id;
+  FILE *file_stream = fopen("r", index_file);
+  if(
+    file_stream &&
+    (commit_id = fs_read_nth_line_from_end(file_stream, 0))
+  )
+    return commit_id;
+  return 0;
+}
+
+/*
  * c0m17 stands for commit
  * :new_commit and :last_commit are placeholders for commit ids
  * Copies the stuff from .1337-617/:last_commit to .1337-617/:new_commit
@@ -65,9 +85,18 @@ int g3n_c0m17_10 (char *restrict commit_id)
 int c0m17 (char *commit_id)
 {
   char commit_path[commit_hash_length + 1 + sizeof(standard_directory)];
+  char *restrict last_commit;
+
   g3n_c0m17_10(commit_id);
   fs_concat_path(standard_directory, commit_id, commit_path);
+
   fs_mkdir(commit_path);
+
+  if( (last_commit = n7h_c0m17(0)) )
+  {
+    fs_recursive_copy(commit_path, last_commit);
+    fs_recursive_copy(commit_path, staging_directory);
+  }
   return 1;
 }
 
