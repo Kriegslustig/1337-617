@@ -204,14 +204,11 @@ int write_string_to_file (
 )
 {
   FILE *file_stream;
-  if( fs_parent_mode(filename) )
+  if( (file_stream = fopen(filename, "a")) )
   {
-    if( (file_stream = fopen(filename, "w")) )
-    {
-      fprintf(file_stream, "%s", string);
-      fclose(file_stream);
-      return 1;
-    }
+    fprintf(file_stream, "%s", string);
+    fclose(file_stream);
+    return 1;
   }
   return 0;
 }
