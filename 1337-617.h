@@ -129,3 +129,12 @@ int _1n17 (char *restrict repo_name)
   free(staging_directory_path);
   return returnValue;
 }
+
+/*
+ * _4d stands for add
+ * it copies the whole current directory into the staging directory
+ */
+int _4d ()
+{
+  return fs_recursive_copy(".", staging_directory);
+}
