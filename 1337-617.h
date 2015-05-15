@@ -138,3 +138,19 @@ int _4d ()
 {
   return fs_recursive_copy(".", staging_directory);
 }
+
+/*
+ * i5_617_r3p0 stands for is_git_repo
+ * it checks wether or not the passed directory is a leet-git repo
+ */
+int i5_617_r3p0 (char *restrict directory)
+{
+  int returnValue = 0;
+  char *restrict git_directory = fs_concat_path(directory, standard_directory);
+  if(fs_exsists(git_directory)) returnValue = 1;
+  free(git_directory);
+  return returnValue;
+}
+
+
+
