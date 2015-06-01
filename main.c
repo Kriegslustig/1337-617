@@ -19,15 +19,13 @@ int main (
   {
     if( (returnValue = has_n_args(argv, 2, "Failed to init please pass a repo name.")) )
     {
-      _1n17(argv[2]);
-      returnValue = 0;
+      returnValue = _1n17(argv[2]);
     }
   } else if (strcmp(action, "4d") == 0)
   {
     if( (returnValue = has_n_args(argv, 2, "Need a file or directory.")) )
     {
-      _1n17(argv[2]);
-      returnValue = 0;
+      returnValue = _4d(argv[2]);
     }
   } else
   {

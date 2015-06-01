@@ -134,9 +134,9 @@ int _1n17 (char *restrict repo_name)
  * _4d stands for add
  * it copies the whole current directory into the staging directory
  */
-int _4d ()
+int _4d (char *target)
 {
-  return fs_recursive_copy(".", staging_directory);
+  return fs_recursive_copy(target, staging_directory);
 }
 
 /*

@@ -101,11 +101,8 @@ int fs_mkdir (const char *restrict dirname)
     {
       return 0;
     }
-  } else
-  {
-    printf("A something with this name already exsists.: %s\n", dirname);
   }
-  return 0;
+  return 1;
 }
 
 int fs_rm (const char* filename)
@@ -165,31 +162,26 @@ int fs_recursive_copy (
   struct dirent *source_directory_list_item;
   char *restrict new_source;
   char *restrict new_destination;
-  if( fs_exsists(source) )
+
+  if( !fs_exsists(source) ) return 0;
+
+  if( !fs_is_dir(source) ) return fs_cp(source, destination);
+
+  fs_mkdir(destination);
+  source_directory = opendir(source);
+  while( (source_directory_list_item = readdir(source_directory)) )
   {
-    fs_mkdir(destination);
-    source_directory = opendir(source);
-    while( (source_directory_list_item = readdir(source_directory)) )
+    if( (source_directory_list_item->d_name)[0] != '.' )
     {
-      if( (source_directory_list_item->d_name)[0] != '.' )
-      {
-        new_source = fs_concat_path(source, source_directory_list_item->d_name);
-        new_destination = fs_concat_path(destination, source_directory_list_item->d_name);
-        if( fs_is_dir(new_source) )
-        {
-          fs_recursive_copy(new_source, new_destination);
-        } else
-        {
-          fs_cp(new_source, new_destination);
-        }
-        free(new_source);
-        free(new_destination);
-      }
+      new_source = fs_concat_path(source, source_directory_list_item->d_name);
+      new_destination = fs_concat_path(destination, source_directory_list_item->d_name);
+      fs_recursive_copy(new_source, new_destination);
+      free(new_source);
+      free(new_destination);
     }
-    return 1;
-    closedir(source_directory);
   }
-  return 0;
+  closedir(source_directory);
+  return 1;
 }
 
 int write_string_to_file (
