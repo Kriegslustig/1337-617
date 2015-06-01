@@ -334,3 +334,20 @@ char *restrict fs_read_nth_line_from_end (
   fseek(file_stream, origin, 0);
   return return_string;
 }
+
+int has_n_args (
+  char *argv[],
+  const int num,
+  const char *restrict message
+)
+{
+  if( *(argv + num) != NULL )
+  {
+    return 1;
+  }
+  else
+  {
+    printf("%s", message);
+    return 0;
+  }
+}
