@@ -20,9 +20,10 @@ char *restrict substring (
 )
 {
   int current_position = 0;
-  char *restrict new_string = malloc(length);
+  char *restrict new_string = malloc(length + 1);
+  *(new_string + length) = '\0';
   do {
-    new_string[current_position] = string[from + current_position];
+    *(new_string + current_position) = *(string + from + current_position);
   } while( current_position++ < (length - 1) );
   return new_string;
 }
@@ -50,18 +51,19 @@ int fs_exsists (const char *restrict filepath)
 
 char *restrict fs_basepath (const char *restrict filepath)
 {
-  int basepath_length = 0;
-  char *restrict last_char;
+  int basepath_length;
+  char *restrict last_char = strrchr(filepath, '/');
   char *restrict basepath;
-  last_char = strrchr(filepath, '/');
-  if( last_char != 0 )
+
+  if( last_char > 0 )
   {
     basepath_length = last_char - filepath;
     basepath = substring(filepath, 0, basepath_length);
   } else
   {
-    basepath = malloc(1);
+    basepath = malloc(2);
     *basepath = '.';
+    *(basepath) = '\n';
   }
   return basepath;
 }
@@ -69,11 +71,7 @@ char *restrict fs_basepath (const char *restrict filepath)
 mode_t fs_mode (const char *restrict filepath)
 {
   struct stat file_status = {0};
-  if( !fs_exsists(filepath) )
-  {
-    printf("No such file: %s\n", filepath);
-    return 0;
-  }
+  if( !fs_exsists(filepath) ) return 0;
   stat(filepath, &file_status);
   return file_status.st_mode;
 }
@@ -82,6 +80,7 @@ int fs_parent_mode (const char *restrict filename)
 {
   int returnValue = 0;
   char *restrict basepath = fs_basepath(filename);
+  printf("%s, %s, %d\n", basepath, filename, returnValue);
 
   returnValue = fs_mode(basepath);
   free(basepath);
@@ -91,16 +90,11 @@ int fs_parent_mode (const char *restrict filename)
 int fs_mkdir (const char *restrict dirname)
 {
   int parent_mode;
+  printf("Making %s\n", dirname);
   if( !fs_exsists(dirname) )
   {
-    if( (parent_mode = fs_parent_mode(dirname)) )
-    {
-      mkdir(dirname, parent_mode);
-      return 1;
-    } else
-    {
-      return 0;
-    }
+    parent_mode = fs_parent_mode(dirname);
+    mkdir(dirname, parent_mode);
   }
   return 1;
 }
@@ -123,6 +117,7 @@ int fs_cp (const char *restrict src, const char *restrict dst)
   FILE *dst_file;
   if( fs_exsists(src) )
   {
+    printf("%s -> %s\n", src, dst);
     src_file = fopen(src, "r");
     dst_file = fopen(dst, "w");
     while((size = fread(buffer, 1, 4096, src_file)) > 0)
@@ -158,6 +153,7 @@ int fs_recursive_copy (
   const char *restrict destination
 )
 {
+  int return_value = 0;
   DIR *source_directory;
   struct dirent *source_directory_list_item;
   char *restrict new_source;
@@ -175,13 +171,13 @@ int fs_recursive_copy (
     {
       new_source = fs_concat_path(source, source_directory_list_item->d_name);
       new_destination = fs_concat_path(destination, source_directory_list_item->d_name);
-      fs_recursive_copy(new_source, new_destination);
+      return_value = fs_recursive_copy(new_source, new_destination);
       free(new_source);
       free(new_destination);
     }
   }
   closedir(source_directory);
-  return 1;
+  return return_value;
 }
 
 int write_string_to_file (
