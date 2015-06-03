@@ -148,6 +148,26 @@ char *restrict fs_concat_path (
   return new_path;
 }
 
+int fs_empty_dir (const char *restrict dirpath)
+{
+  DIR *read_this_dir;
+  struct dirent *dir_ent;
+  char *restrict dir_ent_path;
+
+  if( fs_is_dir(dirpath) )
+  {
+    read_this_dir = opendir(dirpath);
+    while( (dir_ent = readdir(read_this_dir)) )
+    {
+      dir_ent_path = fs_basepath(dir_ent->d_name);
+      fs_rm(dir_ent_path);
+      free(dir_ent_path);
+    }
+    closedir(read_this_dir);
+  }
+  return 0;
+}
+
 int fs_recursive_copy (
   const char *restrict source,
   const char *restrict destination
