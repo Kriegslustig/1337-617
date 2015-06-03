@@ -56,6 +56,19 @@ int g3n_c0m17_10 (char *restrict commit_id)
 }
 
 /*
+ * i5_617_r3p0 stands for is_git_repo
+ * it checks wether or not the passed directory is a leet-git repo
+ */
+int i5_617_r3p0 (char *restrict directory)
+{
+  int returnValue = 0;
+  char *restrict git_directory = fs_concat_path(directory, standard_directory);
+  if(fs_exsists(git_directory)) returnValue = 1;
+  free(git_directory);
+  return returnValue;
+}
+
+/*
  * n7h_c0m17 stands for nth_commit
  * Gets the commit id of the nth commit counting from the latest one
  * Reurns 0 on failure
@@ -136,21 +149,18 @@ int _1n17 (char *restrict repo_name)
  */
 int _4d (char *target)
 {
-  return fs_recursive_copy(target, staging_directory);
-}
+  int return_value = 0;
+  char *restrict new_path;
+  if( !i5_617_r3p0("./") )
+  {
+    printf("%s", "You need to be in a 1337-617 repo to add stuff");
+    return 0;
+  }
 
-/*
- * i5_617_r3p0 stands for is_git_repo
- * it checks wether or not the passed directory is a leet-git repo
- */
-int i5_617_r3p0 (char *restrict directory)
-{
-  int returnValue = 0;
-  char *restrict git_directory = fs_concat_path(directory, standard_directory);
-  if(fs_exsists(git_directory)) returnValue = 1;
-  free(git_directory);
-  return returnValue;
+  new_path = fs_concat_path(staging_directory, target);
+  return_value = fs_recursive_copy(target, new_path);
+  free(new_path);
+  return return_value;
 }
-
 
 
